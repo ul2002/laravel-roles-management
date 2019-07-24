@@ -1,0 +1,97 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: roles-manager-web
+  namespace: roles
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: roles-manager-web
+
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+
+  template:
+    metadata:
+      labels:
+        app: roles-manager-web
+    spec:
+      # inject hostname to connect nginx with php-fpm backend
+      # because dokcer calls it backend while kubernetes requires Pod's localhost
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - "backend"
+
+      containers:
+      - name: web
+        image: ulrich2002/roles-manager:0.0.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: laravel-config
+        env:
+        - name: START_HORIZON
+          value: "false"
+        - name: RUN_LARAVEL_CRON
+          value: "false"
+        - name: PHPFPM_MAX_CHILDREN
+          value: "20"
+        - name: WEB_HTTPS
+          value: "false"
+        - name: WEB_HTTPS_ONLY
+          value: "false"
+        livenessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 15
+        readinessProbe:
+          tcpSocket:
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
+      imagePullSecrets:
+      - name: docker-auth
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: roles-manager-web
+  name: roles-manager-web
+  namespace: roles
+spec:
+  ports:
+  - port: 80
+  selector:
+    name: roles-manager-web
+
+---
+
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: roles-manager-web
+  namespace: roles
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+#    nginx.ingress.kubernetes.io/from-to-www-redirect: "true"
+spec:
+  rules:
+  - host: cloud.roles.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: roles-manager-web
+          servicePort: 80
