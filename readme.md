@@ -28,6 +28,62 @@ Now schedule the script in crontab to run on a daily basis and complete backup o
 
 Save your crontab file. After enabling cron, the script will take backup automatically, But keep check backups on a weekly or monthly basis to make sure.
 
+## Monitoring Resource Metrics with Prometheus
+
+let’s first install Helm. To do that, head over https://get.helm.sh/helm-v2.14.2-linux-amd64.tar.gz and download the latest version
+
+Next, unpack it:
+
+```
+
+tar -zxvf helm-v2.11.0-linux-amd64.tar.gz
+```
+
+Move it to your bin directory:
+
+```
+
+mv linux-amd64/helm /usr/local/bin/helm
+```
+
+Initialize helm and install tiller:
+
+```
+helm init
+```
+
+Create a service account
+
+```
+kubectl create serviceaccount --namespace kube-system tiller
+```
+
+Bind  the new service account to the cluster-admin role. This will give tiller admin access to the entire cluster
+
+```
+kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+```
+
+Deploy tiller and add the line serviceAccount: tiller to spec.template.spec:
+
+```
+kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
+```
+
+Now we are ready to install the Prometheus operator
+
+```
+helm install --name prom-operator stable/prometheus-operator --namespace monitoring
+```
+
+Once the Prometheus operator is installed we can forward the Prometheus server pod to a port on our local machine
+
+```
+kubectl port-forward -n monitoring  prometheus-prom-operator-prometheus-o-prometheus-0 9090:9090
+```
+
+Access the Prometheus dashboard by navigating to http://localhost:9090
+
 
 
 # Authors
