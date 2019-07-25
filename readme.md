@@ -1,18 +1,26 @@
 # Roles Management
 
+This app allows you to manage user permissions and roles in a database
+
 ### Requirement
 
 Kubernetes Cluster <br/>
 Docker >= 17.06 CE <br/>
 Composer
 
-## Install
+## Installation
+
+Clone the repository and do theses steps
 
 ```
+git clone https://github.com/ul2002/laravel-roles-management.git
+cd laravel-roles-management
+cp .env.example .env
+chmod -R 777 storage
 composer install
 ```
 
-## Deploy to a kubernetes cluster manually
+## Deploy to a kubernetes cluster 
 
 Before you need to create a namespace roles
 
@@ -34,6 +42,12 @@ Using Jenkins Pipeline , you may use jenkinsfile (jenkinsfile is located at the 
 ## Schedule Script in Crontab for database backup
 
 Copy the file mysql-backup.sh to /backup
+
+```
+cp ./mysql-backup.sh /backup/
+
+```
+
 
 Now schedule the script in crontab to run on a daily basis and complete backup on regular basis. Edit crontab on your system with crontab -e command. Add following settings to enable backup at 2 in the morning.
 
