@@ -2,8 +2,8 @@
 
 ### Requirement
 
-Kubernetes Cluster
-Docker >= 17.06 CE
+Kubernetes Cluster <br/>
+Docker >= 17.06 CE <br/>
 Composer
 
 ## Install
