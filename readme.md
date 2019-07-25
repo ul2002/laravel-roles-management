@@ -1,6 +1,18 @@
 # Roles Management
 
-## Deploy to a kubernetes cluster
+### Requirement
+
+Kubernetes Cluster
+Docker >= 17.06 CE
+Composer
+
+## Install
+
+```
+composer install
+```
+
+## Deploy to a kubernetes cluster manually
 
 Before you need to create a namespace roles
 
@@ -13,6 +25,11 @@ And then deploy to namespace roles
 kubectl apply -f .
 
 ```
+
+## CI/CD and auto deployent
+
+Using Jenkins Pipeline , you may use jenkinsfile (jenkinsfile is located at the root of the project)
+
 
 ## Schedule Script in Crontab for database backup
 
