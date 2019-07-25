@@ -2,7 +2,9 @@
 
 This app allows you to manage user permissions and roles in a database
 
-### Requirement
+
+
+## Requirement
 
 Kubernetes Cluster <br/>
 Docker >= 17.06 CE <br/>
@@ -33,6 +35,11 @@ And then deploy to namespace roles
 kubectl apply -f .
 
 ```
+### Architecture
+
+This Kubernetes depoloyment  runs the MySQL database server and PHP/Nginx server separately, for scaling. A Deployment is a Kubernetes object which helps solve a number of devops problems, like scaling and rolling updates.
+
+![Cat](https://raw.githubusercontent.com/{ul2002}/laravel-roles-management./assets/architecture.png)
 
 ## CI/CD and auto deployent
 
