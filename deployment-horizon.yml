@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
       - name: horizon
-        image: your-docker-image
+        image: ulrich2002/roles-manager:0.0.1
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
